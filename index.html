@@ -86,24 +86,33 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            We decompose transformer activations into content-stable (H<sup>0</sup>) and context-dependent
-            (H<sup>1</sup>) subspaces using sheaf cohomology. A cellular sheaf built over paraphrase graphs
-            yields a Laplacian whose spectral structure separates phrasing-invariant directions from
-            maximally varying ones, requiring no concept labels or supervised training. Across five models
-            (124M&ndash;13B parameters), H<sup>1</sup> dimensions exert 3.5&ndash;26.5&times; greater causal
-            influence on model output than variance-matched controls (Cohen's <em>d</em> = 2.3&ndash;14.3),
-            H<sup>0</sup> retrieves facts at 60&ndash;68% accuracy using only 20 dimensions, and the two
-            subspaces produce opposite effects under ablation.
+            A paraphrase pair is a small piece of evidence that two activations should agree. We treat that as a
+            sheaf condition. A cellular sheaf over a paraphrase graph defines a coboundary &delta;<sup>0</sup>
+            whose kernel holds activations that paste consistently across the graph, and the rest of the
+            Laplacian spectrum reads off how badly they fail to. On an acyclic matching graph the
+            construction collapses to projected within-pair covariance. Cycles change that. Stacking
+            <em>L</em> layers into a grid yields <em>b</em><sub>1</sub> = <em>N</em>(<em>L</em>&minus;1)
+            algebraic 1-cycles, and a multi-paraphrase ring per fact yields <em>b</em><sub>1</sub> = <em>N</em>.
           </p>
           <p>
-            The decomposition also reveals architecture-dependent fragility: Llama-2-7B collapses under
-            random perturbation (4.2% fact preservation) while all directed methods preserve facts at
-            12&ndash;14% (<em>p</em> &lt; 10<sup>&minus;10</sup>, <em>n</em>=1000); with architecture-specific
-            restriction maps this gap widens to 31.0% vs. 4.2% (<em>p</em> &lt; 10<sup>&minus;50</sup>).
-            Robust models tolerate both perturbation types. Sheaf H<sup>0</sup> outperforms
-            LEACE concept erasure by nearly 2&times; on fact retrieval, and persistent homology reveals
-            that topological complexity in transformer activations emerges layer-dependently, with
-            deeper layers of larger models exhibiting more persistent H<sup>1</sup> structure than random baselines.
+            The multi-layer grid produces a model-derived Hodge harmonic mass varying four orders of magnitude
+            across nine architectures and ranking the same models as their steering fragility
+            (Spearman &rho; = 0.94, <em>n</em> = 6, exact permutation <em>p</em> = 0.008). The ring
+            produces a cycle-aware H<sup>0</sup> that beats pair-only H<sup>0</sup> on every one of eight
+            architectures by a mean of +6.5 pp, a gain within-pair covariance cannot reach. Across nine
+            models from 124M to 13B parameters, the spectral complement of <em>L</em><sub><em>F</em></sub>
+            carries 5.6 to 26.5&times; the causal influence of variance-matched random subspaces
+            (<em>p</em> &lt; 10<sup>&minus;15</sup>). On held-out CounterFact, sheaf H<sup>0</sup> at
+            20 dimensions beats LEACE's preserved subspace at full hidden dimension by a mean +17.1 pp,
+            and swapping the joint-PCA restriction map for random or identity projections barely moves the
+            number. The kernel selection drives the result, not the projection.
+          </p>
+          <p>
+            On the steering-fragile Llama-2-7B, contrastive sheaf steering preserves 31.0% of facts against
+            4.2% for random perturbations (<em>n</em> = 1000, McNemar <em>p</em> &lt; 10<sup>&minus;50</sup>).
+            The same operators recover collapse prevention: tr(<em>L</em><sub><em>F</em></sub>) &minus;
+            &beta; log det Cov is VICReg in coordinates, holding encoder rank at 57&ndash;60/64 where
+            naive consistency collapses to 14&ndash;42/64.
           </p>
         </div>
       </div>
