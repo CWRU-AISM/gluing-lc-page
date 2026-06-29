@@ -96,8 +96,8 @@
           </p>
           <p>
             The multi-layer grid produces a model-derived Hodge harmonic mass varying four orders of magnitude
-            across nine architectures and ranking the same models as their steering fragility
-            (Spearman &rho; = 0.94, <em>n</em> = 6, exact permutation <em>p</em> = 0.008). The ring
+            across six architectures and ranking the same models as their steering fragility
+            (Spearman &rho; = 0.94, <em>n</em> = 6, exact one-sided permutation <em>p</em> = 0.0083). The ring
             produces a cycle-aware H<sup>0</sup> that beats pair-only H<sup>0</sup> on every one of eight
             architectures by a mean of +6.5 pp, a gain within-pair covariance cannot reach. Across nine
             models from 124M to 13B parameters, the spectral complement of <em>L</em><sub><em>F</em></sub>
@@ -105,13 +105,13 @@
             (<em>p</em> &lt; 10<sup>&minus;15</sup>). On held-out CounterFact, sheaf H<sup>0</sup> at
             20 dimensions beats LEACE's preserved subspace at full hidden dimension by a mean +17.1 pp,
             and swapping the joint-PCA restriction map for random or identity projections barely moves the
-            number. The kernel selection drives the result, not the projection.
+            number. The kernel selection is what drives the result.
           </p>
           <p>
             On the steering-fragile Llama-2-7B, contrastive sheaf steering preserves 31.0% of facts against
             4.2% for random perturbations (<em>n</em> = 1000, McNemar <em>p</em> &lt; 10<sup>&minus;50</sup>).
             The same operators recover collapse prevention: tr(<em>L</em><sub><em>F</em></sub>) &minus;
-            &beta; log det Cov is VICReg in coordinates, holding encoder rank at 57&ndash;60/64 where
+            &beta; log det Cov shares VICReg's collapse-prevention geometry, holding encoder rank at 57&ndash;60/64 where
             naive consistency collapses to 14&ndash;42/64.
           </p>
         </div>
