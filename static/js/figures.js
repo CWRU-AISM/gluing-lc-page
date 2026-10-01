@@ -28,7 +28,11 @@ function arrowDefs(svg) {
     .selectAll('path').data(d => [d]).join('path').attr('d', 'M0,0L10,5L0,10z').attr('fill', d => d[1]);
 }
 function spearman(x, y) {
-  const rank = v => { const o = v.map((_, i) => i).sort((a, b) => v[a] - v[b]); const r = []; o.forEach((i, k) => r[i] = k); return r; };
+  const rank = v => {  // average ranks for ties
+    const o = v.map((_, i) => i).sort((a, b) => v[a] - v[b]), r = [];
+    for (let i = 0; i < o.length;) { let j = i; while (j + 1 < o.length && v[o[j + 1]] === v[o[i]]) j++; for (let k = i; k <= j; k++) r[o[k]] = (i + j) / 2; i = j + 1; }
+    return r;
+  };
   const rx = rank(x), ry = rank(y), n = x.length, m = (n - 1) / 2;
   let num = 0, dx = 0, dy = 0;
   for (let i = 0; i < n; i++) { num += (rx[i] - m) * (ry[i] - m); dx += (rx[i] - m) ** 2; dy += (ry[i] - m) ** 2; }
@@ -94,10 +98,6 @@ function pairFigure() {
     g.select('.track').attr('width', bw).attr('height', 8).attr('y', 6).attr('fill', 'none').attr('stroke', C.rule);
     T(g.select('.fill').attr('height', 8).attr('y', 6).attr('fill', d => d.c), ms).attr('width', d => d.v * bw);
     g.select('text').attr('x', -6).attr('y', 14).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', C.ink).text(d => d.t);
-    const a = +slider.value;
-    d3.select('#pair-state').text(a > 80 ? 'The difference lies in H¹: the pair agrees on content.'
-      : a < 10 ? 'The difference lies in H⁰: the pair differs in content.'
-      : 'The difference has components along both H⁰ and H¹.');
   }
   draw(0); onResize(() => draw(0));
 }
@@ -324,11 +324,13 @@ function layersFigure(models, hodge) {
     const slabs = d3.range(nL).map(l => ({ l, y: yb - l * gap }));
     const face = y => `M${x0},${y} L${x0 + sw},${y} L${x0 + sw + sx},${y - sy} L${x0 + sx},${y - sy}Z`;
     const side = y => `M${x0},${y} L${x0 + sw},${y} L${x0 + sw},${y + th} L${x0},${y + th}Z`;
+    const right = y => `M${x0 + sw},${y} L${x0 + sw + sx},${y - sy} L${x0 + sw + sx},${y - sy + th} L${x0 + sw},${y + th}Z`;
     const node = (j, k, y) => { const u = (j + 0.5) / PAIRS_DRAWN, v = k ? 0.7 : 0.3; return [x0 + u * sw + v * sx, y - v * sy]; };
     const layer = svg.selectAll('g.layer').data(slabs, d => d.l).join(
       en => {
         const g = en.append('g').attr('class', 'layer').attr('opacity', 0).attr('transform', d => `translate(0,${d.y - 40})`);
-        g.append('path').attr('class', 'side').attr('d', side(0)).attr('fill', '#e3e3e3').attr('stroke', C.grey).attr('stroke-width', 0.8);
+        g.append('path').attr('class', 'side').attr('d', side(0)).attr('fill', '#dcdcdc').attr('stroke', C.grey).attr('stroke-width', 0.8).attr('stroke-linejoin', 'round');
+        g.append('path').attr('class', 'right').attr('d', right(0)).attr('fill', '#cfcfcf').attr('stroke', C.grey).attr('stroke-width', 0.8).attr('stroke-linejoin', 'round');
         g.append('path').attr('class', 'face').attr('d', face(0)).attr('fill', C.slab).attr('stroke', C.grey).attr('stroke-width', 0.8);
         g.append('g').attr('class', 'struts');
         g.selectAll('line.edge').data(d3.range(PAIRS_DRAWN)).join('line').attr('class', 'edge')
@@ -379,9 +381,10 @@ function layersFigure(models, hodge) {
     row.select('.name').attr('x', m.l - 6).attr('y', y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('font-size', 12)
       .attr('font-weight', d => d.id === st.model ? 700 : 400).attr('fill', C.ink).text(d => d.label);
     T(row.select('rect').attr('height', y.bandwidth()).attr('fill', d => d.id === st.model ? C.h1 : '#e79aa6'), 450).attr('width', d => v(d) ? x(v(d)) - m.l : 0);
-    T(row.select('.val').attr('y', y.bandwidth() / 2 + 4).attr('font-size', 11).attr('fill', C.grey), 450)
+    T(row.select('.val').attr('y', y.bandwidth() / 2 + 4).attr('font-size', 11).attr('fill', C.grey)
+      .attr('stroke', '#fff').attr('stroke-width', 3).attr('paint-order', 'stroke'), 450)
       .attr('x', d => v(d) ? x(v(d)) + 4 : m.l + 4).text(d => v(d) ? d3.format('.1e')(v(d)) : 'no grid');
-    T(svg.selectAll('line.ref').data([ref]).join('line').attr('class', 'ref').attr('y1', m.t).attr('y2', H - m.b)
+    T(svg.selectAll('line.ref').data([ref]).join('line').attr('class', 'ref').lower().attr('y1', m.t).attr('y2', H - m.b)
       .attr('stroke', C.ink).attr('stroke-dasharray', '4 3'), 450).attr('x1', x(ref)).attr('x2', x(ref));
     T(svg.selectAll('text.ref').data([ref]).join('text').attr('class', 'ref').attr('font-size', 11).attr('fill', C.ink).attr('y', 14).attr('text-anchor', 'middle')
       .text(`b₁/|E| = ${d3.format('.2f')(ref)}`), 450).attr('x', x(ref));

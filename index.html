@@ -55,7 +55,7 @@
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
-                <a href="./static/paper.pdf" class="external-link button is-normal is-rounded is-dark">
+                <a href="../docs/paper/neurips/main.pdf" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fas fa-file-pdf"></i></span>
                   <span>Paper</span>
                 </a>
@@ -129,14 +129,13 @@
             <button class="button is-small" id="pair-play" type="button">Play</button>
           </div>
           <div id="pair-svg"></div>
-          <p class="fig-readout" id="pair-state"></p>
-          <p class="figure-caption">
-            <b>Figure 2.</b> A schematic pair in two dimensions, with the coboundary \(\delta^0 = P^\top(h_b - h_a)\) split into its \(H^0\) (blue) and \(H^1\) (red) components. Paraphrases with the same content give a \(\delta^0\) with no \(H^0\) component, since \(H^0 = \ker \delta^0\). The slider rotates the difference, and Play sweeps it.
-          </p>
         </div>
         <div class="content has-text-justified">
           <p>
-            A single-layer matching graph has no cycles, so algebraic \(H^1 = 0\) and the construction reduces to projected within-pair covariance. Cycles enter in two ways. Stacking the same activations across layers gives a grid with \(b_1 = N(L-1)\) squares, and each square asks whether the layer-\(l\)-to-layer-\(l{+}1\) transformation commutes with paraphrase equivalence. The Hodge harmonic mass of a model-derived edge cochain on that grid is the fragility diagnostic in the results. Connecting more of a fact's paraphrases changes \(H^0\) itself. Figure 3 shows the effect for one CounterFact fact.
+            In the schematic above, the black arrow is the coboundary \(\delta^0 = P^\top(h_b - h_a)\), split into its \(H^0\) (blue) and \(H^1\) (red) components. Paraphrases with the same content give a \(\delta^0\) with no \(H^0\) component, since \(H^0 = \ker \delta^0\).
+          </p>
+          <p>
+            A single-layer matching graph has no cycles, so algebraic \(H^1 = 0\) and the construction reduces to projected within-pair covariance. Cycles enter in two ways. Stacking the same activations across layers gives a grid with \(b_1 = N(L-1)\) squares, and each square asks whether the layer-\(l\)-to-layer-\(l{+}1\) transformation commutes with paraphrase equivalence. The Hodge harmonic mass of a model-derived edge cochain on that grid is the fragility diagnostic in the results. Connecting more of a fact's paraphrases changes \(H^0\) itself. Below, one CounterFact fact is drawn under four topologies, with held-out hard retrieval for \(H^0\) built on each. The five-edge path recovers the gain over pairs (\(+7.7\)&nbsp;pp), and the ring adds \(+0.5\)&nbsp;pp, so the joint constraint carries the gain.
           </p>
         </div>
 
@@ -152,9 +151,6 @@
             <div class="column"><div id="graph-bars"></div></div>
           </div>
           <ol class="paraphrase-list" id="graph-paraphrases"></ol>
-          <p class="figure-caption">
-            <b>Figure 3.</b> Paraphrase graphs for one CounterFact fact, with held-out hard retrieval when \(H^0\) is built on each topology. The five-edge path recovers the gain over pairs (\(+7.7\)&nbsp;pp) and the ring adds \(+0.5\)&nbsp;pp, so the joint constraint carries the gain. Play steps through the four topologies.
-          </p>
         </div>
       </div>
     </div>
@@ -177,7 +173,7 @@
           <img src="./static/images/fig_leace_comparison.png" width="2087" height="817" loading="lazy"
                alt="Grouped bars of held-out hard retrieval accuracy for eight models; sheaf H0 is the tallest bar on every model.">
           <p class="figure-caption">
-            <b>Figure 4.</b> Held-out hard CounterFact retrieval, where the Full and LEACE bars coincide because LEACE's edit does not change retrieval here. Sheaf \(H^0\) at 20 dimensions beats full-dimension LEACE-preserved on all eight models, by \(+1.5\) to \(+42.2\)&nbsp;pp (mean \(+17.1\)&nbsp;pp).
+            <b>Figure 2.</b> Held-out hard CounterFact retrieval, where the Full and LEACE bars coincide because LEACE's edit does not change retrieval here. Sheaf \(H^0\) at 20 dimensions beats full-dimension LEACE-preserved on all eight models, by \(+1.5\) to \(+42.2\)&nbsp;pp (mean \(+17.1\)&nbsp;pp).
           </p>
         </div>
 
@@ -191,14 +187,14 @@
           <img src="./static/images/fig_steering_methods.png" width="1787" height="871" loading="lazy"
                alt="Fact preservation under each steering method for Llama-2-7B, Mistral-7B and Llama-3-8B.">
           <p class="figure-caption">
-            <b>Figure 5.</b> Fact preservation under five steering methods on CounterFact at \(\alpha = 0.3\) (\(n = 1000\) per model). On fragile Llama-2-7B, random steering collapses to 4.2% and the contrastive sheaf leads at 31.0%, while on Mistral-7B the CCA sheaf and random tie (41.6% vs. 39.4%).
+            <b>Figure 3.</b> Fact preservation under five steering methods on CounterFact at \(\alpha = 0.3\) (\(n = 1000\) per model). On fragile Llama-2-7B, random steering collapses to 4.2% and the contrastive sheaf leads at 31.0%, while on Mistral-7B the CCA sheaf and random tie (41.6% vs. 39.4%).
           </p>
         </div>
 
         <h3 class="title is-4">Harmonic mass and steering fragility</h3>
         <div class="content has-text-justified">
           <p>
-            Harmonic mass comes from MRPC layer-transition differences and steering fragility from CounterFact fact preservation under random perturbation, so the two are disjoint measurements of the same model. Fragility is the fraction of CounterFact facts preserved under a random direction norm-matched to \(0.3\) times the hidden-state norm at layer \(2L/3\). The three lowest-mass architectures are the three most robust and the three highest are the three most fragile, for a Spearman \(\rho = 0.90\) (exact one-sided \(p = 0.014\)).
+            Harmonic mass comes from MRPC layer-transition differences and steering fragility from CounterFact fact preservation under random perturbation, so the two are disjoint measurements of the same model. Fragility is the fraction of CounterFact facts preserved under a random direction norm-matched to \(0.3\) times the hidden-state norm at layer \(2L/3\). The three lowest-mass architectures are the three most robust and the three highest are the three most fragile, for a Spearman \(\rho = 0.90\) (exact one-sided \(p = 0.014\)). The one rank inversion, Qwen-2.5-7B against Llama-3-8B, is within sampling error (34.3% vs. 36.0%). The plot shows each model with its 95% interval, and the examples under it are random-steered continuations from that model.
           </p>
         </div>
         <div class="figure-block fig" id="fig-frag">
@@ -223,15 +219,12 @@
               <div><span class="who">Random-steered</span><p class="tw"></p></div>
             </div>
           </div>
-          <p class="figure-caption">
-            <b>Figure 6.</b> Harmonic mass of the two-layer grid against fact preservation under random steering, with 95% bootstrap intervals. Across six models the two rankings correlate at \(\rho = 0.90\). The buttons hide or show a model and \(\rho\) updates, and selecting a point opens its examples.
-          </p>
         </div>
 
         <h3 class="title is-4">Harmonic mass across depth</h3>
         <div class="content has-text-justified">
           <p>
-            The Betti number \(b_1 = N(L-1)\) grows linearly with the number of layers, so \(L\) sets the number of cycles in the grid. A random Gaussian cochain has expected harmonic fraction \(b_1/|E|\), drawn as the reference line in Figure 7. The model-derived cochain puts near-zero weight on the harmonic subspace for Mistral-7B and Qwen-2.5-7B and substantial weight for Llama-2-7B.
+            The Betti number \(b_1 = N(L-1)\) grows linearly with the number of layers, so \(L\) sets the number of cycles in the grid. A random Gaussian cochain has expected harmonic fraction \(b_1/|E|\), drawn as the dashed reference line below. The model-derived cochain puts near-zero weight on the harmonic subspace for Mistral-7B and Qwen-2.5-7B and substantial weight for Llama-2-7B.
           </p>
         </div>
         <div class="figure-block fig" id="fig-layers">
@@ -243,9 +236,6 @@
           <div class="fig-readout" id="layers-readout"></div>
           <div id="layers-stack"></div>
           <div id="layers-svg"></div>
-          <p class="figure-caption">
-            <b>Figure 7.</b> The \(L\)-layer grid drawn as stacked slabs, above each model's harmonic mass against the random-cochain reference (dashed). Llama-2-7B carries the most mass at \(L = 2\), and Mistral-7B and Qwen-2.5-7B carry near-zero mass. The slider sets \(L\), and the menu or a bar picks the model whose mass shades the struts.
-          </p>
         </div>
       </div>
     </div>
