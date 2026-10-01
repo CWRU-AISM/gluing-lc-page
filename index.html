@@ -8,22 +8,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gluing Local Contexts into Global Meaning</title>
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
+  <style>
+    a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, .point:focus-visible {
+      outline: 2px solid #0072b2; outline-offset: 2px;
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; } }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { const v = document.getElementById('teaser'); v.pause(); v.controls = true; }
+    });
+  </script>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+          onload="renderMathInElement(document.body, {delimiters: [{left: '\\(', right: '\\)', display: false}]});"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script defer src="./static/js/figures.js"></script>
 </head>
 <body>
 
@@ -34,40 +42,34 @@
         <div class="column has-text-centered">
           <h1 class="title is-1 publication-title">Gluing Local Contexts into Global Meaning: A Sheaf-Theoretic Decomposition of Transformer Representations</h1>
           <div class="is-size-5 publication-authors">
-            <span class="author-block">
-              <a href="https://bryceag11.github.io">Bryce Grant</a>,</span>
-            <span class="author-block">
-              <a href="https://scholar.google.com/citations?user=4CbVWDcAAAAJ&hl=en">Peng Wang</a></span>
+            <span class="author-block"><a href="https://bryceag11.github.io">Bryce Grant</a>,</span>
+            <span class="author-block"><a href="https://scholar.google.com/citations?user=4CbVWDcAAAAJ&hl=en">Peng Wang</a></span>
           </div>
-
           <div class="is-size-5 publication-authors">
             <span class="author-block">Case Western Reserve University</span>
           </div>
-
           <div class="is-size-6 publication-authors">
-            <span class="author-block">ICLR 2026 Workshop on Unifying Concept Representation Learning (UCRL)</span>
+            <span class="author-block">NeurIPS 2026</span>
           </div>
 
           <div class="column has-text-centered">
             <div class="publication-links">
-              <!-- PDF Link. -->
               <span class="link-block">
-                <a href="./static/paper.pdf"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fas fa-file-pdf"></i>
-                  </span>
+                <a href="./static/paper.pdf" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
                   <span>Paper</span>
                 </a>
               </span>
-              <!-- Code Link. -->
               <span class="link-block">
-                <a href="https://github.com/CWRU-AISM/gluing-lc"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-github"></i>
-                  </span>
-                  <span>Code</span>
+                <a class="external-link button is-normal is-rounded is-dark coming-soon" aria-disabled="true" title="coming soon">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv (coming soon)</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a class="external-link button is-normal is-rounded is-dark coming-soon" aria-disabled="true" title="coming soon">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code (coming soon)</span>
                 </a>
               </span>
             </div>
@@ -78,64 +80,190 @@
   </div>
 </section>
 
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="./static/videos/sheaf_preview.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</section>
+
 <section class="section">
   <div class="container is-max-desktop">
-    <!-- Abstract. -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            A paraphrase pair is a small piece of evidence that two activations should agree. We treat that as a
-            sheaf condition. A cellular sheaf over a paraphrase graph defines a coboundary &delta;<sup>0</sup>
-            whose kernel holds activations that paste consistently across the graph, and the rest of the
-            Laplacian spectrum reads off how badly they fail to. On an acyclic matching graph the
-            construction collapses to projected within-pair covariance. Cycles change that. Stacking
-            <em>L</em> layers into a grid yields <em>b</em><sub>1</sub> = <em>N</em>(<em>L</em>&minus;1)
-            algebraic 1-cycles, and a multi-paraphrase ring per fact yields <em>b</em><sub>1</sub> = <em>N</em>.
-          </p>
-          <p>
-            The multi-layer grid produces a model-derived Hodge harmonic mass varying four orders of magnitude
-            across six architectures and ranking the same models as their steering fragility
-            (Spearman &rho; = 0.94, <em>n</em> = 6, exact one-sided permutation <em>p</em> = 0.0083). The ring
-            produces a cycle-aware H<sup>0</sup> that beats pair-only H<sup>0</sup> on every one of eight
-            architectures by a mean of +6.5 pp, a gain within-pair covariance cannot reach. Across nine
-            models from 124M to 13B parameters, the spectral complement of <em>L</em><sub><em>F</em></sub>
-            carries 5.6 to 26.5&times; the causal influence of variance-matched random subspaces
-            (<em>p</em> &lt; 10<sup>&minus;15</sup>). On held-out CounterFact, sheaf H<sup>0</sup> at
-            20 dimensions beats LEACE's preserved subspace at full hidden dimension by a mean +17.1 pp,
-            and swapping the joint-PCA restriction map for random or identity projections barely moves the
-            number. The kernel selection is what drives the result.
-          </p>
-          <p>
-            On the steering-fragile Llama-2-7B, contrastive sheaf steering preserves 31.0% of facts against
-            4.2% for random perturbations (<em>n</em> = 1000, McNemar <em>p</em> &lt; 10<sup>&minus;50</sup>).
-            The same operators recover collapse prevention: tr(<em>L</em><sub><em>F</em></sub>) &minus;
-            &beta; log det Cov shares VICReg's collapse-prevention geometry, holding encoder rank at 57&ndash;60/64 where
-            naive consistency collapses to 14&ndash;42/64.
+            Interpretability tools decompose a single activation into features, probe attributes chosen in advance, or compare whole activation spaces, and none of them measures whether a representation encodes the same content when the phrasing changes. We treat each paraphrase pair as a local witness that two activations should agree and build a cellular sheaf over the paraphrase graph; its Laplacian \(L_\mathcal{F}\) answers the question on a frozen model with no training. The kernel \(H^0\) is a content subspace: at 20 dimensions it beats the preserved subspace of the concept eraser LEACE on held-out CounterFact fact retrieval across eight architectures by a mean \(+17.1\)&nbsp;pp, and constraining all paraphrases of a fact jointly adds a further \(+6.5\)&nbsp;pp. The spectral complement concentrates causal influence: ablating the most paraphrase-variable coordinates, a coordinate-wise proxy for it, changes model outputs \(5.6\) to \(26.5\times\) more than ablating coordinates of matched per-coordinate variability, across nine models from 124M to 13B parameters. Stacking layers into a grid creates \(b_1 = N(L-1)\) algebraic 1-cycles, and the resulting model-derived harmonic mass varies by nearly three orders of magnitude across six architectures and ranks them as their steering fragility does (Spearman \(\rho = 0.90\), exact one-sided permutation \(p = 0.014\)). Paraphrase-invariant content and a model's failure to glue it across layers are thus read off one operator.
           </p>
         </div>
       </div>
     </div>
-    <!--/ Abstract. -->
   </div>
 </section>
 
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Method</h2>
+        <div class="content has-text-justified">
+          <p>
+            Nodes hold mean-pooled hidden states, edges connect paraphrases, and a restriction map \(P \in \mathbb{R}^{d \times k}\) projects each pair into a shared \(k\)-dimensional comparison space. The coboundary \((\delta^0 s)_e = P^\top s_{v_2} - P^\top s_{v_1}\) measures pair disagreement, and the sheaf Laplacian \(L_\mathcal{F} = (\delta^0)^\top \delta^0\) splits the space into \(H^0 = \ker \delta^0\), spanned by the bottom eigenvectors, and the \(H^1\) directions, spanned by the top eigenvectors. The eigenproblem is \(k \times k\) (\(k = 128\)) whatever the hidden dimension, so the spectral step costs the same from 124M to 13B models.
+          </p>
+        </div>
+        <div class="figure-block">
+          <img src="./static/images/fig_pipeline.png" width="1441" height="476"
+               alt="Hidden states h_a and h_b are projected by P transpose into a k-dimensional edge space; the coboundary splits it into H0, the kernel, and H1, its complement.">
+          <p class="figure-caption">
+            <b>Figure 1.</b> Hidden states \(h_a, h_b\) pass through \(P^\top\) into edge space, where the coboundary \(\delta^0\) measures their disagreement. The sheaf Laplacian splits that space into \(H^0\), content stable across phrasing, and \(H^1\), context-dependent variation.
+          </p>
+        </div>
+        <div class="figure-block fig" id="fig-pair">
+          <div class="fig-controls">
+            <label for="pair-angle">Angle of the pair's difference</label>
+            <input id="pair-angle" type="range" min="0" max="90" step="1" value="90">
+            <button class="button is-small" id="pair-play" type="button">Play</button>
+          </div>
+          <div id="pair-svg"></div>
+          <p class="fig-readout" id="pair-state"></p>
+          <p class="figure-caption">
+            <b>Figure 2.</b> A schematic pair in two dimensions, with the coboundary \(\delta^0 = P^\top(h_b - h_a)\) split into its \(H^0\) (blue) and \(H^1\) (red) components. Paraphrases with the same content give a \(\delta^0\) with no \(H^0\) component, since \(H^0 = \ker \delta^0\). The slider rotates the difference, and Play sweeps it.
+          </p>
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            A single-layer matching graph has no cycles, so algebraic \(H^1 = 0\) and the construction reduces to projected within-pair covariance. Cycles enter in two ways. Stacking the same activations across layers gives a grid with \(b_1 = N(L-1)\) squares, and each square asks whether the layer-\(l\)-to-layer-\(l{+}1\) transformation commutes with paraphrase equivalence. The Hodge harmonic mass of a model-derived edge cochain on that grid is the fragility diagnostic in the results. Connecting more of a fact's paraphrases changes \(H^0\) itself. Figure 3 shows the effect for one CounterFact fact.
+          </p>
+        </div>
+
+        <div class="figure-block fig" id="fig-graph">
+          <div class="fig-controls">
+            <label>Fact <select id="graph-fact"></select></label>
+            <div class="buttons has-addons" id="graph-topo" role="group" aria-label="Graph topology"></div>
+            <button class="button is-small" id="graph-play" type="button">Play</button>
+          </div>
+          <div class="fig-readout" id="graph-readout"><span id="graph-name"></span>: <span id="graph-V"></span> paraphrases, <span id="graph-E"></span> edges, <span class="b0">b<sub>0</sub> = <span id="graph-b0"></span></span>, <span class="b1">b<sub>1</sub> = <span id="graph-b1"></span></span></div>
+          <div class="columns is-vcentered">
+            <div class="column is-5"><div id="graph-svg"></div></div>
+            <div class="column"><div id="graph-bars"></div></div>
+          </div>
+          <ol class="paraphrase-list" id="graph-paraphrases"></ol>
+          <p class="figure-caption">
+            <b>Figure 3.</b> Paraphrase graphs for one CounterFact fact, with held-out hard retrieval when \(H^0\) is built on each topology. The five-edge path recovers the gain over pairs (\(+7.7\)&nbsp;pp) and the ring adds \(+0.5\)&nbsp;pp, so the joint constraint carries the gain. Play steps through the four topologies.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Results</h2>
+
+        <h3 class="title is-4">\(H^0\) beats LEACE on held-out fact retrieval</h3>
+        <div class="content has-text-justified">
+          <p>
+            We compare sheaf \(H^0\) (20 dimensions) with LEACE's preserved subspace on ROME CounterFact, splitting 500 facts 70/30 into training and held-out test sets. On hard same-relation retrieval, sheaf \(H^0\) at 20 dimensions beats LEACE-preserved at full hidden dimension on all eight architectures, by a mean of \(+17.1\)&nbsp;pp. Random or identity restriction maps keep most of the gain, so the content lives in the kernel of the within-pair difference covariance whatever \(P\) is.
+          </p>
+        </div>
+        <div class="figure-block">
+          <img src="./static/images/fig_leace_comparison.png" width="2087" height="817" loading="lazy"
+               alt="Grouped bars of held-out hard retrieval accuracy for eight models; sheaf H0 is the tallest bar on every model.">
+          <p class="figure-caption">
+            <b>Figure 4.</b> Held-out hard CounterFact retrieval, where the Full and LEACE bars coincide because LEACE's edit does not change retrieval here. Sheaf \(H^0\) at 20 dimensions beats full-dimension LEACE-preserved on all eight models, by \(+1.5\) to \(+42.2\)&nbsp;pp (mean \(+17.1\)&nbsp;pp).
+          </p>
+        </div>
+
+        <h3 class="title is-4">Steering depends on the architecture</h3>
+        <div class="content has-text-justified">
+          <p>
+            On Llama-2-7B, random steering at \(\alpha = 0.3\) collapses generation (4.2%), while directed methods preserve facts at 12&ndash;31%, led by the architecture-matched contrastive sheaf at 31.0% (McNemar \(p &lt; 10^{-70}\) against random). On Mistral-7B the CCA sheaf leads numerically (41.6% against 39.4% for random, McNemar \(p = 0.19\), a statistical tie), and on Llama-3-8B random steering and PIXEL lead (36.0&ndash;38.8%).
+          </p>
+        </div>
+        <div class="figure-block">
+          <img src="./static/images/fig_steering_methods.png" width="1787" height="871" loading="lazy"
+               alt="Fact preservation under each steering method for Llama-2-7B, Mistral-7B and Llama-3-8B.">
+          <p class="figure-caption">
+            <b>Figure 5.</b> Fact preservation under five steering methods on CounterFact at \(\alpha = 0.3\) (\(n = 1000\) per model). On fragile Llama-2-7B, random steering collapses to 4.2% and the contrastive sheaf leads at 31.0%, while on Mistral-7B the CCA sheaf and random tie (41.6% vs. 39.4%).
+          </p>
+        </div>
+
+        <h3 class="title is-4">Harmonic mass and steering fragility</h3>
+        <div class="content has-text-justified">
+          <p>
+            Harmonic mass comes from MRPC layer-transition differences and steering fragility from CounterFact fact preservation under random perturbation, so the two are disjoint measurements of the same model. Fragility is the fraction of CounterFact facts preserved under a random direction norm-matched to \(0.3\) times the hidden-state norm at layer \(2L/3\). The three lowest-mass architectures are the three most robust and the three highest are the three most fragile, for a Spearman \(\rho = 0.90\) (exact one-sided \(p = 0.014\)).
+          </p>
+        </div>
+        <div class="figure-block fig" id="fig-frag">
+          <div class="fig-readout">Spearman &rho; = <span id="frag-rho"></span> over n = <span id="frag-n"></span> models</div>
+          <div id="frag-svg"></div>
+          <div class="buttons frag-legend" id="frag-legend" role="group" aria-label="Show or hide models"></div>
+          <div class="examples" id="frag-gens">
+            <p class="ex-head"><b id="ex-model"></b>: <span id="ex-stats"></span></p>
+            <div class="ex-controls">
+              <div class="buttons has-addons" id="ex-filter" role="group" aria-label="Filter examples">
+                <button class="button is-small" type="button" data-kept="1">fact kept</button>
+                <button class="button is-small" type="button" data-kept="0">fact lost</button>
+              </div>
+              <button class="button is-small" id="ex-prev" type="button" aria-label="Previous example"><span class="icon is-small"><i class="fas fa-chevron-left"></i></span></button>
+              <span id="ex-count"></span>
+              <button class="button is-small" id="ex-next" type="button" aria-label="Next example"><span class="icon is-small"><i class="fas fa-chevron-right"></i></span></button>
+              <button class="button is-small" id="ex-more" type="button" aria-expanded="false">more</button>
+            </div>
+            <p class="ex-prompt"><span class="who">Prompt</span> <span id="ex-prompt"></span></p>
+            <div class="gen-cols" id="ex-body">
+              <div><span class="who">Unsteered</span><p class="tw"></p></div>
+              <div><span class="who">Random-steered</span><p class="tw"></p></div>
+            </div>
+          </div>
+          <p class="figure-caption">
+            <b>Figure 6.</b> Harmonic mass of the two-layer grid against fact preservation under random steering, with 95% bootstrap intervals. Across six models the two rankings correlate at \(\rho = 0.90\). The buttons hide or show a model and \(\rho\) updates, and selecting a point opens its examples.
+          </p>
+        </div>
+
+        <h3 class="title is-4">Harmonic mass across depth</h3>
+        <div class="content has-text-justified">
+          <p>
+            The Betti number \(b_1 = N(L-1)\) grows linearly with the number of layers, so \(L\) sets the number of cycles in the grid. A random Gaussian cochain has expected harmonic fraction \(b_1/|E|\), drawn as the reference line in Figure 7. The model-derived cochain puts near-zero weight on the harmonic subspace for Mistral-7B and Qwen-2.5-7B and substantial weight for Llama-2-7B.
+          </p>
+        </div>
+        <div class="figure-block fig" id="fig-layers">
+          <div class="fig-controls">
+            <label for="layers-slider">Layers in the grid, <span id="layers-value"></span></label>
+            <input id="layers-slider" type="range" min="0" max="3" step="1" value="0">
+            <label>Model <select id="layers-model"></select></label>
+          </div>
+          <div class="fig-readout" id="layers-readout"></div>
+          <div id="layers-stack"></div>
+          <div id="layers-svg"></div>
+          <p class="figure-caption">
+            <b>Figure 7.</b> The \(L\)-layer grid drawn as stacked slabs, above each model's harmonic mass against the random-cochain reference (dashed). Llama-2-7B carries the most mass at \(L = 2\), and Mistral-7B and Qwen-2.5-7B carry near-zero mass. The slider sets \(L\), and the menu or a bar picks the model whose mass shades the struts.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
-    <pre><code>@inproceedings{
-grant2026gluing,
-title={Gluing Local Contexts into Global Meaning: A Sheaf-Theoretic Decomposition of Transformer Representations},
-author={Bryce Grant and Peng Wang},
-booktitle={ICLR 2026 Workshop on Unifying Concept Representation Learning},
-year={2026},
-url={https://openreview.net/forum?id=eub5YrhExo}
+    <pre><code>@inproceedings{grant2026gluing,
+  title     = {Gluing Local Contexts into Global Meaning: A Sheaf-Theoretic Decomposition of Transformer Representations},
+  author    = {Bryce Grant and Peng Wang},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2026},
+  url       = {https://cwru-aism.github.io/gluing-lc-page/}
 }</code></pre>
   </div>
 </section>
-
 
 <footer class="footer">
   <div class="container">
