@@ -209,3 +209,4 @@ body {
 .coming-soon { opacity: 0.55; cursor: default; }
 #graph-svg svg { max-width: 300px; margin: 0 auto; }
 #frag-svg svg { max-width: 640px; margin: 0 auto; }
+.fig-tip { position: absolute; z-index: 20; pointer-events: none; max-width: 260px; background: #fff; border: 1px solid var(--rule); padding: 0.3rem 0.5rem; font-size: 0.8rem; line-height: 1.35; color: var(--ink); }

@@ -55,7 +55,7 @@
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
-                <a href="../docs/paper/neurips/main.pdf" class="external-link button is-normal is-rounded is-dark">
+                <a href="./static/paper.pdf" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fas fa-file-pdf"></i></span>
                   <span>Paper</span>
                 </a>
@@ -135,7 +135,7 @@
             In the schematic above, the black arrow is the coboundary \(\delta^0 = P^\top(h_b - h_a)\), split into its \(H^0\) (blue) and \(H^1\) (red) components. Paraphrases with the same content give a \(\delta^0\) with no \(H^0\) component, since \(H^0 = \ker \delta^0\).
           </p>
           <p>
-            A single-layer matching graph has no cycles, so algebraic \(H^1 = 0\) and the construction reduces to projected within-pair covariance. Cycles enter in two ways. Stacking the same activations across layers gives a grid with \(b_1 = N(L-1)\) squares, and each square asks whether the layer-\(l\)-to-layer-\(l{+}1\) transformation commutes with paraphrase equivalence. The Hodge harmonic mass of a model-derived edge cochain on that grid is the fragility diagnostic in the results. Connecting more of a fact's paraphrases changes \(H^0\) itself. Below, one CounterFact fact is drawn under four topologies, with held-out hard retrieval for \(H^0\) built on each. The five-edge path recovers the gain over pairs (\(+7.7\)&nbsp;pp), and the ring adds \(+0.5\)&nbsp;pp, so the joint constraint carries the gain.
+            A single-layer matching graph has no cycles, so algebraic \(H^1 = 0\) and the construction reduces to projected within-pair covariance. Cycles enter in two ways. Stacking the same activations across layers gives a grid with \(b_1 = N(L-1)\) squares, and each square asks whether the layer-\(l\)-to-layer-\(l{+}1\) transformation commutes with paraphrase equivalence. The Hodge harmonic mass of a model-derived edge cochain on that grid is the fragility diagnostic in the results. Connecting more of a fact's paraphrases changes \(H^0\) itself. Below, one CounterFact fact is drawn under four topologies, with held-out hard retrieval for \(H^0\) built on each. The five-edge path recovers the gain over pairs (\(+7.7\)&nbsp;pp), and the ring adds \(+0.5\)&nbsp;pp, so the joint constraint carries the gain. Above the graph, \(b_0\) counts connected components and \(b_1\) independent cycles: the path reaches the gain with \(b_1 = 0\).
           </p>
         </div>
 
@@ -224,7 +224,7 @@
         <h3 class="title is-4">Harmonic mass across depth</h3>
         <div class="content has-text-justified">
           <p>
-            The Betti number \(b_1 = N(L-1)\) grows linearly with the number of layers, so \(L\) sets the number of cycles in the grid. A random Gaussian cochain has expected harmonic fraction \(b_1/|E|\), drawn as the dashed reference line below. The model-derived cochain puts near-zero weight on the harmonic subspace for Mistral-7B and Qwen-2.5-7B and substantial weight for Llama-2-7B.
+            The Betti number \(b_1 = N(L-1)\) grows linearly with the number of layers, so \(L\) sets the number of cycles in the grid. A random Gaussian cochain has expected harmonic fraction \(b_1/|E|\), drawn as the dashed reference line below. The model-derived cochain puts near-zero weight on the harmonic subspace for Mistral-7B and Qwen-2.5-7B and substantial weight for Llama-2-7B. In the stack, each slab is one layer, each dot a sentence, each black edge a paraphrase pair, and each strut joins one sentence at adjacent layers, with 6 of the 30 MRPC pairs drawn. Mistral-7B keeps thin, pale struts at every depth, while Llama-2-7B has the widest and darkest struts at \(L = 2\).
           </p>
         </div>
         <div class="figure-block fig" id="fig-layers">

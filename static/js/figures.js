@@ -10,6 +10,7 @@ const TOPO = [  // edge lists mirror experiments/run_cycle_h0_matched.py
   { key: 'clique', name: 'clique', edges: [0,1,2,3,4].flatMap(a => [0,1,2,3,4].filter(b => b > a).map(b => [a, b])) },
 ];
 const fmt1 = d3.format('.1f'), fmtS = d3.format('+.1f');
+const fmtMass = v => +(+v.toFixed(3) || +v.toFixed(4)) + '';  // as tabulated in the paper: 3 decimals, 4 below 0.0005
 const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const width = el => Math.max(300, Math.min(el.clientWidth || 720, 760));
 const svgIn = (el, W, H, label) => d3.select(el).selectAll('svg').data([0]).join('svg')
@@ -20,6 +21,20 @@ function tweenText(sel, to, fmt) {  // counts from the displayed value to `to`
     const from = +this.dataset.v || 0; this.dataset.v = to;
     T(d3.select(this), 500).tween('text', () => { const i = d3.interpolateNumber(from, to); return t => { this.textContent = fmt(i(t)); }; });
   });
+}
+// One tooltip for every figure: pointer hover, touch and keyboard focus.
+const tip = d3.select('body').append('div').attr('class', 'fig-tip').attr('role', 'tooltip').style('opacity', 0);
+function placeTip(x, y) {
+  const r = tip.node().getBoundingClientRect();
+  let left = x + 12, top = y - r.height - 10;
+  if (left + r.width > scrollX + innerWidth - 8) left = x - r.width - 12;
+  if (top < scrollY + 4) top = y + 16;
+  tip.style('left', `${Math.max(scrollX + 4, left)}px`).style('top', `${top}px`);
+}
+function tipOn(sel, html) {
+  sel.on('pointerenter.tip pointermove.tip', (e, d) => { tip.html(html(d)).style('opacity', 1); placeTip(e.pageX, e.pageY); })
+    .on('pointerleave.tip blur.tip', () => tip.style('opacity', 0))
+    .on('focus.tip', function (e, d) { const b = this.getBoundingClientRect(); tip.html(html(d)).style('opacity', 1); placeTip(b.right + scrollX, b.top + scrollY); });
 }
 function arrowDefs(svg) {
   svg.selectAll('defs').data([0]).join('defs').selectAll('marker').data(Object.entries({ ink: C.ink, h0: C.h0, h1: C.h1, grey: C.grey }))
@@ -86,6 +101,7 @@ function pairFigure() {
       { id: 'ld', t: 'δ⁰', p: P(R, [(pa[0] + pb[0]) / 2 + 18 * Math.sin(phi) / s, (pa[1] + pb[1]) / 2 + 18 * Math.cos(phi) / s - 4 / s]), a: 'middle' },
       { id: 'tL', t: 'hidden space ℝᵈ', p: [L.x - 60 * s, 16], c: C.grey }, { id: 'tR', t: 'edge space ℝᵏ', p: [R.x - 40 * s, 16], c: C.grey },
       { id: 'tP', t: 'Pᵀ', p: [(L.x + R.x) / 2 - 6, 72], c: C.grey },
+      { id: 'pa', t: 'Pᵀh_a', p: P(R, [pa[0] - 6, pa[1] + 10]), a: 'end', c: C.grey }, { id: 'pb', t: 'Pᵀh_b', p: P(R, [pb[0] + 8, pb[1] - 12]), c: C.grey },
     ];
     const tx = svg.selectAll('text.l').data(lab, d => d.id).join(en => en.append('text').attr('class', 'l').attr('x', d => d.p[0]).attr('y', d => d.p[1]))
       .attr('font-size', s < 1 ? 12 : 14).attr('fill', d => d.c || C.ink).attr('text-anchor', d => d.a || 'start').text(d => d.t);
@@ -98,6 +114,8 @@ function pairFigure() {
     g.select('.track').attr('width', bw).attr('height', 8).attr('y', 6).attr('fill', 'none').attr('stroke', C.rule);
     T(g.select('.fill').attr('height', 8).attr('y', 6).attr('fill', d => d.c), ms).attr('width', d => d.v * bw);
     g.select('text').attr('x', -6).attr('y', 14).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', C.ink).text(d => d.t);
+    svg.selectAll('text.bh').data(['component of δ⁰']).join('text').attr('class', 'bh').attr('font-size', 11).attr('fill', C.grey)
+      .attr('x', bx).attr('y', H - 48).text(d => d);
   }
   draw(0); onResize(() => draw(0));
 }
@@ -160,6 +178,7 @@ function graphFigure(models, para, ret) {
     if (REDUCED) { sim.stop(); sim.tick(150); }
     place();
 
+    tipOn(g, d => `<b>Paraphrase ${d.i + 1}</b>${used.has(d.i) ? '' : ' (unused here)'}<br>${esc(fact.expressions[d.i].replace(/\s+/g, ' '))}`);
     d3.select('#graph-paraphrases').selectAll('li').data(fact.expressions).join('li')
       .classed('off', (d, i) => !used.has(i)).text(d => d.replace(/\s+/g, ' '));
     bars(t);
@@ -174,7 +193,7 @@ function graphFigure(models, para, ret) {
     const x = d3.scaleLinear().domain([0, 100]).range([m.l, BW - m.r]);
     const s = svgIn(el, BW, BH, `Hard retrieval accuracy per model for the ${t.name} topology`);
     const nt = rows[0] ? ret[rows[0].id].topology.n_test_facts : null;
-    s.selectAll('text.hd').data([`${t.name}, top-1 %` + (nt ? ` on ${nt} held-out facts` : ''), 'vs. pair']).join('text').attr('class', 'hd').attr('font-size', 12).attr('fill', C.grey)
+    s.selectAll('text.hd').data([`${t.name}, top-1 %` + (nt ? (BW < 420 ? ` (${nt} facts)` : ` on ${nt} held-out facts`) : ''), 'vs. pair (pp)']).join('text').attr('class', 'hd').attr('font-size', 12).attr('fill', C.grey)
       .attr('x', (d, i) => i ? BW - 4 : m.l).attr('text-anchor', (d, i) => i ? 'end' : 'start').attr('y', 12).text(d => d);
     const row = s.selectAll('g.r').data(data, d => d.id).join(en => { const g = en.append('g').attr('class', 'r'); g.append('text').attr('class', 'n'); g.append('rect'); g.append('text').attr('class', 'v'); g.append('text').attr('class', 'dv'); return g; })
       .attr('transform', (d, i) => `translate(0,${m.t + i * rh})`);
@@ -182,6 +201,7 @@ function graphFigure(models, para, ret) {
     T(row.select('rect').attr('x', m.l).attr('y', 4).attr('height', rh - 8).attr('fill', d => d.bold ? C.ink : C.h0), 500).attr('width', d => x(d.v) - m.l);
     T(row.select('.v').attr('y', 14).attr('font-size', 12).attr('fill', C.ink), 500).attr('x', d => x(d.v) + 4)
       .tween('text', function (d) { const i = d3.interpolateNumber(+this.dataset.v || d.v, d.v); this.dataset.v = d.v; return t => { this.textContent = fmt1(i(t)); }; });
+    tipOn(row, d => `<b>${d.label}</b><br>${t.name}: ${fmt1(d.v)}%` + (t.key === pair ? '' : `<br>pair: ${fmt1(d.v - d.dv)}%<br>difference: ${fmtS(d.dv)} pp`));
     row.select('.dv').attr('x', BW - 4).attr('y', 14).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', C.grey).text(d => t.key === pair ? '' : fmtS(d.dv));
     const n = rows[0] && ret[rows[0].id].topology;
     if (n) d3.select('#graph-n').text(` (${n.n_train_facts} training and ${n.n_test_facts} held-out facts)`);
@@ -225,6 +245,8 @@ function fragFigure(models, frag, hodge, gens) {
       .attr('class', 'lab').attr('text-anchor', 'middle').attr('font-size', 13).attr('fill', C.ink)
       .attr('transform', d => d.a ? `rotate(${d.a})` : null).attr('x', d => d.x).attr('y', d => d.y).text(d => d.t);
 
+    svg.selectAll('text.key').data(['vertical bars: 95% CI']).join('text').attr('class', 'key').attr('font-size', 11).attr('fill', C.grey)
+      .attr('x', W - m.r).attr('y', m.t + 10).attr('text-anchor', 'end').text(d => d);
     const left = d => x(d.x) > W - 120;
     const g = svg.selectAll('g.point').data(pts, d => d.id).join(
       en => {
@@ -237,7 +259,8 @@ function fragFigure(models, frag, hodge, gens) {
       up => up,
       ex => { T(ex.select('circle'), 350).attr('r', 0); T(ex.select('line'), 350).attr('y1', d => y(d.y)).attr('y2', d => y(d.y)); T(ex.select('text'), 250).attr('opacity', 0); T(ex, 350).remove(); });
     const pick = d => { st.sel = d.id; st.k = 0; st.more = false; draw(); showExample(true); };
-    g.attr('aria-label', d => `${d.label}: show examples`).on('click', (e, d) => pick(d))
+    tipOn(g, d => `<b>${d.label}</b><br>harmonic mass (L = 2): ${fmtMass(d.x)}<br>fact preservation: ${fmt1(d.y)}%<br>95% CI: ${fmt1(d.ci[0])} to ${fmt1(d.ci[1])}%<br>n = ${frag[d.id].n} prompts`);
+    g.attr('aria-label', d => `${d.label}: harmonic mass ${fmtMass(d.x)}, fact preservation ${fmt1(d.y)}%, show examples`).on('click', (e, d) => pick(d))
       .on('keydown', (e, d) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(d); } });
     T(g.select('line').attr('stroke', C.grey).attr('stroke-width', 1.2), 450).attr('x1', d => x(d.x)).attr('x2', d => x(d.x)).attr('y1', d => y(d.ci[0])).attr('y2', d => y(d.ci[1]));
     T(g.select('circle').attr('fill', C.ink).attr('stroke', d => d.id === st.sel ? C.h0 : C.ink)
@@ -270,7 +293,7 @@ function fragFigure(models, frag, hodge, gens) {
     st.k = (st.k + list.length) % Math.max(1, list.length);
     const ex = list[st.k];
     d3.select('#ex-model').text(p.label);
-    d3.select('#ex-stats').text(`${fmt1(f.pres_pct)}% of ${f.n} prompts keep the fact under random steering.`);
+    d3.select('#ex-stats').text(`${fmt1(f.pres_pct)}% of ${f.n} prompts keep the fact under random steering. Target entity in bold.`);
     d3.selectAll('#ex-filter button').classed('is-dark', function () { return (this.dataset.kept === '1') === st.kept; })
       .attr('aria-pressed', function () { return (this.dataset.kept === '1') === st.kept; });
     d3.select('#ex-count').text(list.length ? `${st.k + 1} of ${list.length}` : 'none');
@@ -306,6 +329,7 @@ function layersFigure(models, hodge) {
   slider.addEventListener('input', () => draw());
   const color = d3.scaleSequentialLog([1e-5, 1], d3.interpolateRgb('#e8e8e8', C.h1));
   const decades = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1];
+  const strutW = d3.scaleLog([1e-5, 1], [0.8, 7]).clamp(true);
 
   function draw() {
     const L = Ls[+slider.value], nL = +L, h = hodge[st.model], mass = h.mass[L];
@@ -347,20 +371,21 @@ function layersFigure(models, hodge) {
     // struts: from each node on layer l up to the same sentence on layer l+1 (one pair of struts per square)
     layer.select('g.struts').selectAll('line').data(d => d.l < nL - 1 ? d3.range(PAIRS_DRAWN * 2) : []).join(en => en.append('line').attr('y2', i => node(i >> 1, i & 1, 0)[1]))
       .attr('x1', i => node(i >> 1, i & 1, 0)[0]).attr('x2', i => node(i >> 1, i & 1, 0)[0]).attr('y1', i => node(i >> 1, i & 1, 0)[1])
-      .attr('stroke-width', 2.2).attr('stroke-dasharray', mass ? null : '3 3')
-      .call(s => T(s, 450).attr('y2', i => node(i >> 1, i & 1, 0)[1] - gap).attr('stroke', mass ? color(mass) : C.light));
+      .attr('stroke-dasharray', mass ? null : '3 3')
+      .call(s => T(s, 600).attr('y2', i => node(i >> 1, i & 1, 0)[1] - gap).attr('stroke', mass ? color(mass) : C.light).attr('stroke-width', mass ? strutW(mass) : 1.5));
     svg.selectAll('text.lvl').data([`layer 1`, `layer ${L}`]).join('text').attr('class', 'lvl').attr('font-size', 12).attr('fill', C.grey)
       .attr('x', x0 + sw + sx + 8).attr('text-anchor', 'start')
       .call(s => T(s, 450).attr('y', (d, i) => (i ? yb - (nL - 1) * gap : yb) - sy / 2));
-    // discrete log legend for strut shade
-    const lg = svg.selectAll('g.legend').data([0]).join('g').attr('class', 'legend').attr('transform', `translate(${W - 150},${14})`);
-    lg.selectAll('rect').data(decades).join('rect').attr('x', (d, i) => i * 22).attr('width', 22).attr('height', 8).attr('fill', d => color(d));
+    // legend: one strut sample per decade, drawn with the same shade and width as the struts
+    const lg = svg.selectAll('g.legend').data([0]).join('g').attr('class', 'legend').attr('transform', `translate(${W - 146},${12})`);
+    lg.selectAll('line.s').data(decades).join('line').attr('class', 's').attr('x1', (d, i) => 11 + i * 22).attr('x2', (d, i) => 11 + i * 22)
+      .attr('y1', 6).attr('y2', 26).attr('stroke', d => color(d)).attr('stroke-width', d => strutW(d));
     lg.selectAll('text.t').data([decades[0], decades[decades.length - 1]]).join('text').attr('class', 't').attr('font-size', 11).attr('fill', C.ink)
-      .attr('y', 22).attr('x', (d, i) => i * 132).attr('text-anchor', (d, i) => i ? 'end' : 'start').text(d => d3.format('.0e')(d));
-    lg.selectAll('text.h').data(['strut shade: harmonic mass']).join('text').attr('class', 'h').attr('font-size', 11).attr('fill', C.grey).attr('y', 36).text(d => d);
+      .attr('y', 40).attr('x', (d, i) => i * 132).attr('text-anchor', (d, i) => i ? 'end' : 'start').text(d => d3.format('.0e')(d));
+    lg.selectAll('text.h').data(['strut shade and width:', 'harmonic mass']).join('text').attr('class', 'h').attr('font-size', 11).attr('fill', C.grey).attr('y', (d, i) => 54 + i * 13).text(d => d);
     if (mass) {
       const mk = lg.selectAll('path.mk').data([mass]).join('path').attr('class', 'mk').attr('d', 'M0,0 l-4,-6 h8z').attr('fill', C.ink);
-      T(mk, 450).attr('transform', d => `translate(${Math.log10(d / 1e-5) / 5 * 132},0)`);
+      T(mk, 600).attr('transform', d => `translate(${11 + Math.log10(d / 1e-5) * 22},4)`);
     } else lg.selectAll('path.mk').remove();
 
     bars(L, ref);
@@ -378,6 +403,9 @@ function layersFigure(models, hodge) {
       const g = en.append('g').attr('class', 'row').style('cursor', 'pointer'); g.append('text').attr('class', 'name'); g.append('rect').attr('x', m.l).attr('width', 0); g.append('text').attr('class', 'val'); return g;
     }).attr('transform', d => `translate(0,${y(d.id)})`).on('click', (e, d) => { st.model = d.id; msel.property('value', d.id); draw(); });
     const v = d => hodge[d.id].mass[L];
+    svg.selectAll('text.xl').data(['harmonic mass (log scale)']).join('text').attr('class', 'xl').attr('font-size', 12).attr('fill', C.ink)
+      .attr('x', (m.l + W - m.r) / 2).attr('y', H - 2).attr('text-anchor', 'middle').text(d => d);
+    tipOn(row, d => `<b>${d.label}</b>, L = ${L}<br>` + (v(d) ? `harmonic mass: ${d3.format('.2e')(v(d))}<br>random reference: ${d3.format('.2f')(ref)}` : 'no grid at this depth'));
     row.select('.name').attr('x', m.l - 6).attr('y', y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('font-size', 12)
       .attr('font-weight', d => d.id === st.model ? 700 : 400).attr('fill', C.ink).text(d => d.label);
     T(row.select('rect').attr('height', y.bandwidth()).attr('fill', d => d.id === st.model ? C.h1 : '#e79aa6'), 450).attr('width', d => v(d) ? x(v(d)) - m.l : 0);
