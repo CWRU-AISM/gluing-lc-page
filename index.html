@@ -194,7 +194,7 @@
         <h3 class="title is-4">Harmonic mass and steering fragility</h3>
         <div class="content has-text-justified">
           <p>
-            Harmonic mass comes from MRPC layer-transition differences and steering fragility from CounterFact fact preservation under random perturbation, so the two are disjoint measurements of the same model. Fragility is the fraction of CounterFact facts preserved under a random direction norm-matched to \(0.3\) times the hidden-state norm at layer \(2L/3\). The three lowest-mass architectures are the three most robust and the three highest are the three most fragile, for a Spearman \(\rho = 0.90\) (exact one-sided \(p = 0.014\)). The one rank inversion, Qwen-2.5-7B against Llama-3-8B, is within sampling error (34.3% vs. 36.0%). The plot shows each model with its 95% interval, and the examples under it are random-steered continuations from that model.
+            Harmonic mass comes from MRPC layer-transition differences and steering fragility from CounterFact fact preservation under random perturbation, so the two are disjoint measurements of the same model. Fragility is the fraction of CounterFact facts preserved under a random direction norm-matched to \(0.3\) times the hidden-state norm at layer \(\lfloor 5L/8 \rfloor\). The three lowest-mass architectures are the three most robust and the three highest are the three most fragile, for a Spearman \(\rho = 0.90\) (exact one-sided \(p = 0.014\)). The one rank inversion, Qwen-2.5-7B against Llama-3-8B, is within sampling error (34.3% vs. 36.0%). The plot shows each model with its 95% interval, and the examples under it are random-steered continuations from that model.
           </p>
         </div>
         <div class="figure-block fig" id="fig-frag">
